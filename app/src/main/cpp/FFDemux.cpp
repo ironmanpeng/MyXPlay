@@ -6,7 +6,7 @@
 #include "FFDemux.h"
 
 extern "C"{
-#include "libavformat/avformat.h"
+#include <libavformat/avformat.h>
 }
 
 //打开文件，或者流媒体 rmtp http rtsp
@@ -71,6 +71,8 @@ XParameter FFDemux::GetAPara() {
     audioStream = re;
     XParameter para;
     para.para = ic->streams[re]->codecpar;
+    para.channels = ic->streams[re]->codecpar->channels;
+    para.sample_rate = ic->streams[re]->codecpar->sample_rate;
     return para;
 }
 

@@ -15,14 +15,15 @@ bool FFResample::Open(XParameter in, XParameter out) {
     //音频重采样上下文初始化
     actx = swr_alloc();
     actx = swr_alloc_set_opts(actx,
-                              av_get_default_channel_layout(2),
-                              AV_SAMPLE_FMT_S16,in.para->sample_rate,
+                              av_get_default_channel_layout(out.channels),
+                              AV_SAMPLE_FMT_S16,out.sample_rate,
                               av_get_default_channel_layout(in.para->channels),
                               (AVSampleFormat)in.para->format,in.para->sample_rate,
                               0,0);
     int re = swr_init(actx);
     if(re != 0){
         XLOGE("swr_init failed!");
+        return false;
     }else{
         XLOGI("swr_init success!");
     }
@@ -39,7 +40,7 @@ XData FFResample::Resample(XData indata) {
         return XData();
     }
 
-    XLOGE("indata size is %d",indata.size);
+    //XLOGE("indata size is %d",indata.size);
     AVFrame *frame = (AVFrame *)indata.data;
 
     //输出空间的分配
@@ -56,8 +57,7 @@ XData FFResample::Resample(XData indata) {
         out.Drop();
         return XData();
     }
-    XLOGE("swr_convert success = %d",len);
-
+    //XLOGE("swr_convert success = %d",len);
     return out;
 
 }

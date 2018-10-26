@@ -9,6 +9,7 @@
 #include "IVideoView.h"
 #include "GLVideoView.h"
 #include "FFResample.h"
+#include "SLAudioPlay.h"
 #include <android/native_window_jni.h>
 
 class TestObs : public IObserver{
@@ -50,9 +51,14 @@ Java_com_pengtg_myxplay_MainActivity_stringFromJNI(
     vdecode->AddObs(view);
 
     IResample *resample = new FFResample();
-    resample->Open(de->GetAPara());
+    XParameter outPara = de->GetAPara();
+
+    resample->Open(de->GetAPara(),outPara);
     adecode->AddObs(resample);
 
+    IAudioPlay *audioPlay = new SLAudioPlay();
+    audioPlay->StartPlay(outPara);
+    resample->AddObs(audioPlay);
 
     de->Start();
     vdecode->Start();
