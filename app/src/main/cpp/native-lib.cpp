@@ -19,6 +19,13 @@ public:
     }
 };
 
+extern "C"
+JNIEXPORT
+jint JNI_OnLoad(JavaVM *vm,void *res){
+    FFDecode::InitHard(vm);
+    return JNI_VERSION_1_4;
+}
+
 IVideoView *view = NULL;
 
 extern "C" JNIEXPORT jstring

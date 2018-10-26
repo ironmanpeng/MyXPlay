@@ -3,10 +3,15 @@
 //
 extern "C"{
     #include <libavcodec/avcodec.h>
+#include <libavcodec/jni.h>
 }
 
 #include "FFDecode.h"
 #include "XLog.h"
+
+void FFDecode::InitHard(void *vm) {
+    av_jni_set_java_vm(vm,0);
+}
 
 bool FFDecode::Open(XParameter para) {
     if(!para.para) return false;
@@ -76,6 +81,11 @@ XData FFDecode::RecvFrame() {
         //样本字节数 * 单通道样本数 * 通道数
         d.size = av_get_bytes_per_sample((AVSampleFormat)frame->format)*frame->nb_samples*2;
     }
+    d.format = frame->format;
+    if(!isAudio){
+        XLOGE("data format is %d",frame->format);
+    }
+
     memcpy(d.datas,frame->data, sizeof(d.datas));
 
     return d;
